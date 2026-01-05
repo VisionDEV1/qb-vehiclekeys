@@ -5,7 +5,7 @@ The changes are these
 - Removed Hotwiring 3D Text
 - Now required to lockpick into vehicle + Lockpick once inside to get keys
 
-  Players now have to use the lockpick item to get into the vehicle But also use the item aswell to get keys to the vehicle. This is a much nicer way to lockpick cars then the hotwiring which is loud and annoying
+  Players now have to use the lockpick item to get into the vehicle But also use the item aswell to get keys to the vehicle. This is a much nicer way to lockpick cars then the hotwiring which is loud and annoying | The
   Police call works when a player fails the lockpicking - Same as usual.
 
 # Vehicle Key NUI Preview
