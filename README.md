@@ -1,5 +1,12 @@
-# qb-vehiclekeys
-Vehicle Keys System For QB-Core
+# qb-vehiclekeys | VDEVELOPMENTS VERSION
+This is a slight edit to QB-Cores Original QB-Vehiclekeys script. 
+The changes are these
+- Removed Hotwiring Fuction
+- Removed Hotwiring 3D Text
+- Now required to lockpick into vehicle + Lockpick once inside to get keys
+
+  Players now have to use the lockpick item to get into the vehicle But also use the item aswell to get keys to the vehicle. This is a much nicer way to lockpick cars then the hotwiring which is loud and annoying
+  Police call works when a player fails the lockpicking - Same as usual.
 
 # Vehicle Key NUI Preview
 [[Preview Here]](https://www.youtube.com/watch?v=7E9TXR3lXPI)
