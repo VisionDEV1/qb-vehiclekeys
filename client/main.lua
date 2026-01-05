@@ -89,14 +89,7 @@ local function robKeyLoop()
 
                 if GetPedInVehicleSeat(vehicle, -1) == PlayerPedId() and not HasKeys(plate) and not isBlacklistedVehicle(vehicle) and not AreKeysJobShared(vehicle) then
                     sleep = 0
-
-                    local vehiclePos = GetOffsetFromEntityInWorldCoords(vehicle, 0.0, 1.0, 0.5)
-                    DrawText3D(vehiclePos.x, vehiclePos.y, vehiclePos.z, Lang:t('info.skeys'))
                     SetVehicleEngineOn(vehicle, false, false, true)
-
-                    if IsControlJustPressed(0, 74) then
-                        Hotwire(vehicle, plate)
-                    end
                 end
             end
 
@@ -260,24 +253,42 @@ end)
 RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local vehicle = QBCore.Functions.GetClosestVehicle()
+    local isInsideVehicle = IsPedInAnyVehicle(ped, false)
+    local vehicle = nil
 
-    if vehicle == nil or vehicle == 0 then return end
+    -- Determine which vehicle we're working on
+    if isInsideVehicle then
+        vehicle = GetVehiclePedIsIn(ped)
+        -- Must be in driver seat to hotwire
+        if GetPedInVehicleSeat(vehicle, -1) ~= ped then
+            QBCore.Functions.Notify('You must be in the driver seat', 'error')
+            return
+        end
+    else
+        vehicle = QBCore.Functions.GetClosestVehicle()
+        if vehicle == nil or vehicle == 0 then return end
+        if #(pos - GetEntityCoords(vehicle)) > 2.5 then return end
+        if GetVehicleDoorLockStatus(vehicle) <= 0 then return end
+    end
+
     if HasKeys(QBCore.Functions.GetPlate(vehicle)) then return end
-    if #(pos - GetEntityCoords(vehicle)) > 2.5 then return end
-    if GetVehicleDoorLockStatus(vehicle) <= 0 then return end
+    if isBlacklistedVehicle(vehicle) then return end
 
-    local difficulty = isAdvanced and 'easy' or 'medium' -- Easy for advanced lockpick, medium by default
-    local success = exports['qb-minigames']:Skillbar(difficulty)
-
+    local difficulty = isAdvanced and 'easy' or 'medium'
+    local success = exports['bl_ui']:CircleProgress(5, 70)
+    
     local chance = math.random()
     TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
+    
     if success then
         lastPickedVehicle = vehicle
 
-        if GetPedInVehicleSeat(vehicle, -1) == ped then
+        if isInsideVehicle then
+            -- Hotwiring from inside - give keys
             TriggerServerEvent('qb-vehiclekeys:server:AcquireVehicleKeys', QBCore.Functions.GetPlate(vehicle))
+            QBCore.Functions.Notify('Vehicle hotwired successfully', 'success')
         else
+            -- Lockpicking from outside - just unlock
             QBCore.Functions.Notify(Lang:t('notify.vlockpick'), 'success')
             TriggerServerEvent('qb-vehiclekeys:server:setVehLockState', NetworkGetNetworkIdFromEntity(vehicle), 1)
         end
